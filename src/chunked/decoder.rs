@@ -4,8 +4,8 @@ use std::ops::Range;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 
-use async_std::io::{self, Read};
-use async_std::sync::Arc;
+use futures_lite::{io::{self, AsyncRead as Read}};
+use std::sync::Arc;
 use byte_pool::{Block, BytePool};
 use http_types::trailers::{Sender, Trailers};
 

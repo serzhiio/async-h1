@@ -1,8 +1,7 @@
 use std::pin::Pin;
 
-use async_std::io;
-use async_std::io::prelude::*;
-use async_std::task::{Context, Poll};
+use futures_lite::{io::{self, AsyncBufRead}};
+use std::task::{Context, Poll};
 use http_types::Response;
 
 const CR: u8 = b'\r';
@@ -73,7 +72,6 @@ impl ChunkedEncoder {
     ) -> Poll<io::Result<usize>> {
         self.bytes_written = 0;
         let res = self.run(res, cx, buf);
-        log::trace!("ChunkedEncoder {} bytes written", self.bytes_written);
         res
     }
 
@@ -104,7 +102,6 @@ impl ChunkedEncoder {
         buf: &mut [u8],
     ) -> Poll<io::Result<usize>> {
         use State::*;
-        log::trace!("ChunkedEncoder state: {:?} -> {:?}", self.state, state);
 
         #[cfg(debug_assertions)]
         match self.state {

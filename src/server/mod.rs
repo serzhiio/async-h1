@@ -1,10 +1,9 @@
 //! Process HTTP connections on the server.
 
 use std::time::Duration;
+use std::future::Future;
 
-use async_std::future::{timeout, Future, TimeoutError};
-use async_std::io::{self};
-use async_std::io::{Read, Write};
+use futures_lite::{io, AsyncRead as Read, AsyncWrite as Write, FutureExt};
 use http_types::{Request, Response};
 
 mod decode;
@@ -12,6 +11,7 @@ mod encode;
 
 pub use decode::decode;
 pub use encode::Encoder;
+use async_io::Timer;
 
 /// Configure the server.
 #[derive(Debug, Clone)]
@@ -58,10 +58,12 @@ where
         let fut = decode(io.clone());
 
         let req = if let Some(timeout_duration) = opts.headers_timeout {
-            match timeout(timeout_duration, fut).await {
-                Ok(Ok(Some(r))) => r,
-                Ok(Ok(None)) | Err(TimeoutError { .. }) => break, /* EOF or timeout */
-                Ok(Err(e)) => return Err(e),
+            match fut.or(async{
+                Timer::new(timeout_duration).await;
+                Err(http_types::Error::from_str(http_types::StatusCode::GatewayTimeout,"TimeoutError"))
+            }).await? {
+                Some(r) => r,
+                None => break,
             }
         } else {
             match fut.await? {

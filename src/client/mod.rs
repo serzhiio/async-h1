@@ -1,6 +1,5 @@
 //! Process HTTP connections on the client.
-
-use async_std::io::{self, Read, Write};
+use futures_lite::{io, AsyncRead as Read, AsyncWrite as Write};
 use http_types::{Request, Response};
 
 mod decode;
@@ -15,12 +14,10 @@ where
     RW: Read + Write + Send + Sync + Unpin + 'static,
 {
     let mut req = Encoder::encode(req).await?;
-    log::trace!("> {:?}", &req);
 
     io::copy(&mut req, &mut stream).await?;
 
     let res = decode(stream).await?;
-    log::trace!("< {:?}", &res);
 
     Ok(res)
 }

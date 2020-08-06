@@ -2,8 +2,7 @@
 
 use std::str::FromStr;
 
-use async_std::io::{BufReader, Read, Write};
-use async_std::prelude::*;
+use futures_lite::{AsyncRead as Read, AsyncWrite as Write, io::{BufReader, AsyncWriteExt, AsyncBufReadExt, AsyncReadExt}};
 use http_types::headers::{CONTENT_LENGTH, EXPECT, TRANSFER_ENCODING};
 use http_types::{ensure, ensure_eq, format_err};
 use http_types::{Body, Method, Request, Url};

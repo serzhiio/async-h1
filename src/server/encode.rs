@@ -2,9 +2,8 @@
 
 use std::pin::Pin;
 
-use async_std::io;
-use async_std::io::prelude::*;
-use async_std::task::{Context, Poll};
+use futures_lite::{io, AsyncRead as Read};
+use std::task::{Context, Poll};
 use http_types::headers::{CONTENT_LENGTH, DATE, TRANSFER_ENCODING};
 use http_types::{Method, Response};
 
@@ -62,7 +61,6 @@ impl Read for Encoder {
     ) -> Poll<io::Result<usize>> {
         self.bytes_written = 0;
         let res = self.run(cx, buf);
-        log::trace!("ServerEncoder {} bytes written", self.bytes_written);
         res
     }
 }
@@ -92,7 +90,6 @@ impl Encoder {
         buf: &mut [u8],
     ) -> Poll<io::Result<usize>> {
         use State::*;
-        log::trace!("ServerEncoder state: {:?} -> {:?}", self.state, state);
 
         #[cfg(debug_assertions)]
         match self.state {

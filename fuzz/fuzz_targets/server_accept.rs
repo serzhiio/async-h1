@@ -6,7 +6,7 @@ use std::sync::{Arc, Mutex};
 use std::task::{Context, Poll};
 
 use async_std::io::Cursor;
-use futures_io::{AsyncRead, AsyncWrite};
+use futures_lite::{AsyncRead, AsyncWrite};
 
 #[derive(Clone, Debug)]
 struct RwWrapper(Arc<Mutex<Cursor<Vec<u8>>>>);
