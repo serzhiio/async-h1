@@ -112,3 +112,5 @@ pub mod server;
 
 pub use client::connect;
 pub use server::{accept, accept_with_opts, ServerOptions};
+
+pub use http_types::{Method as HttpMethod, Request as HttpRequest};
