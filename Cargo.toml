@@ -12,8 +12,8 @@ readme = "README.md"
 edition = "2018"
 
 [dependencies]
-async-io = "0.1"
-futures-lite = "0.1"
+async-io = "0.2"
+futures-lite = "1"
 httparse = "1"
 http-types = {git="https://github.com/serzhiio/http-types", branch="agnostic"}
 pin-project-lite = "0.1"
