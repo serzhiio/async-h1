@@ -59,7 +59,7 @@ where
 
         let req = if let Some(timeout_duration) = opts.headers_timeout {
             match fut.or(async{
-                Timer::new(timeout_duration).await;
+                Timer::after(timeout_duration).await;
                 Err(http_types::Error::from_str(http_types::StatusCode::GatewayTimeout,"TimeoutError"))
             }).await? {
                 Some(r) => r,
